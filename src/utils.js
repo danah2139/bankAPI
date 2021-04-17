@@ -110,11 +110,20 @@ const transferMoney = (to, from, cash) => {
     throw new Error("please insert id");
   }
   if(!cash){
-    throw new Error("please insert cash to deposit");
+     throw new Error("please insert cash to deposit");
   }
   const users = loadUsers();
-
-
+  let giver = users.find(user=>user.id===from);
+  let reciever = users.find(user=>user.id===to);
+  if(!reciever||!giver){
+    throw new Error('one of the users not exist')
+  }
+  let exceptedCash = giver.cash - newCash;
+      if (exceptedCash < -giver.credit) {
+        throw new Error("there is not enough cash in the account");
+      }
+      giver.cash = exceptedCash;
+      reciever+=cash;
 
 };
 
