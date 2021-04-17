@@ -21,17 +21,6 @@ app.get("/api/users", (req, res) => {
   res.json(users);
 });
 
-// filter with query
-app.get("/api/filter/query", (req, res) => {
-  try {
-    const { query, ...fields } = req.query;
-    const users = filterUsers(query, fields);
-    res.status(200).send(users);
-  } catch (e) {
-    res.status(400).send({ message: e.message });
-  }
-});
-
 // filter with params
 app.get("/api/filter/params", (req, res) => {
   try {

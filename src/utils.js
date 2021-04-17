@@ -23,21 +23,24 @@ const filterUsers = (fields) => {
   const users = loadusers();
   return users.filter((user) => {
     for(let field in fields){
-        if(user[field]===)
+        if(user[field]===fields[field]){
+          return user;
+        }
     }
   });
 };
 
-const createUser = (newUser) => {
-  if (!user.id) {
+const createUser = ({id,credit = 0, cash = 0}) => {
+  if (!id) {
     throw new Error("please insert id");
   }
   let users = loadUsers();
-  let checkUser = users.find((user) => user.id === newUser.id);
+  let checkUser = users.find((user) => user.id === id);
   if (checkUser) {
     throw new Error("user already exist!");
   }
-  users.push(newUser);
+  let user = {id,credit = 0, cash = 0};
+  users.push(user);
   saveUsers(users);
 };
 
@@ -124,11 +127,13 @@ const transferMoney = (to, from, cash) => {
       }
       giver.cash = exceptedCash;
       reciever+=cash;
+      return { receiver, giver };
 
 };
 
 // const sortUsersByCash = () => {
 //   const users = loadusers();
+
 //   const sortUsers = users.sort((a, b) => {
 //     return a.cash - b.cash;
 //   });
