@@ -22,15 +22,15 @@ const getAllUsers = () => {
 const filterUsers = (fields) => {
   const users = loadusers();
   return users.filter((user) => {
-    for(let field in fields){
-        if(user[field]===fields[field]){
-          return user;
-        }
+    for (let field in fields) {
+      if (user[field] === fields[field]) {
+        return user;
+      }
     }
   });
 };
 
-const createUser = ({id,credit = 0, cash = 0}) => {
+const createUser = ({ id, credit = 0, cash = 0 }) => {
   if (!id) {
     throw new Error("please insert id");
   }
@@ -39,7 +39,7 @@ const createUser = ({id,credit = 0, cash = 0}) => {
   if (checkUser) {
     throw new Error("user already exist!");
   }
-  let user = {id,credit = 0, cash = 0};
+  let user = { id, credit, cash };
   users.push(user);
   saveUsers(users);
 };
@@ -109,26 +109,25 @@ const withdrawMoney = (id, newCash) => {
 };
 
 const transferMoney = (to, from, cash) => {
-  if (!to||!from) {
+  if (!to || !from) {
     throw new Error("please insert id");
   }
-  if(!cash){
-     throw new Error("please insert cash to deposit");
+  if (!cash) {
+    throw new Error("please insert cash to deposit");
   }
   const users = loadUsers();
-  let giver = users.find(user=>user.id===from);
-  let reciever = users.find(user=>user.id===to);
-  if(!reciever||!giver){
-    throw new Error('one of the users not exist')
+  let giver = users.find((user) => user.id === from);
+  let reciever = users.find((user) => user.id === to);
+  if (!reciever || !giver) {
+    throw new Error("one of the users not exist");
   }
   let exceptedCash = giver.cash - newCash;
-      if (exceptedCash < -giver.credit) {
-        throw new Error("there is not enough cash in the account");
-      }
-      giver.cash = exceptedCash;
-      reciever+=cash;
-      return { receiver, giver };
-
+  if (exceptedCash < -giver.credit) {
+    throw new Error("there is not enough cash in the account");
+  }
+  giver.cash = exceptedCash;
+  reciever += cash;
+  return { receiver, giver };
 };
 
 // const sortUsersByCash = () => {
