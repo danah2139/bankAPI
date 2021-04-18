@@ -45,8 +45,13 @@ const createUser = ({ id, credit = 0, cash = 0 }) => {
 };
 
 const getUser = (id) => {
+  if (!id) {
+    throw new Error("please insert id");
+  }
   let users = loadUsers();
-  return users.find((user) => user.id === id);
+  let user = users.find((user) => user.id === id);
+  if (!user) throw new Error("user not exist");
+  return user;
 };
 
 const updateUserCredit = (id, newCredit) => {
@@ -64,6 +69,7 @@ const updateUserCredit = (id, newCredit) => {
   if (flag) {
     throw new Error("user not exist!");
   }
+  saveUsers(users);
 };
 
 const depositMoney = (id, newCash) => {
@@ -82,7 +88,7 @@ const depositMoney = (id, newCash) => {
     throw new Error("user not exist!");
   }
 
-  saveUsers(updateUsers);
+  saveUsers(users);
 };
 
 const withdrawMoney = (id, newCash) => {
@@ -116,18 +122,18 @@ const transferMoney = (to, from, cash) => {
     throw new Error("please insert cash to deposit");
   }
   const users = loadUsers();
-  let giver = users.find((user) => user.id === from);
-  let reciever = users.find((user) => user.id === to);
-  if (!reciever || !giver) {
+  let giverIndex = users.findIndex((user) => user.id === from);
+  let recieverIndex = users.findIndex((user) => user.id === to);
+  if (recieverIndex === -1 || giverIndex === -1) {
     throw new Error("one of the users not exist");
   }
-  let exceptedCash = giver.cash - newCash;
-  if (exceptedCash < -giver.credit) {
+  let exceptedCash = users[giverIndex].cash - newCash;
+  if (exceptedCash < -users[gverIndex].credit) {
     throw new Error("there is not enough cash in the account");
   }
-  giver.cash = exceptedCash;
-  reciever += cash;
-  return { receiver, giver };
+  users[giverIndex].cash = exceptedCash;
+  users[recieverIndex].cashr += cash;
+  saveUsers(users);
 };
 
 // const sortUsersByCash = () => {

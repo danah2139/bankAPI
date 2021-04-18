@@ -33,9 +33,13 @@ app.get("/api/filter/params", (req, res) => {
 });
 // get user
 app.get("/api/users/:id/", (req, res) => {
-  const { id } = req.params;
-  const user = getUser(id);
-  res.status(200).send(user);
+  try {
+    const { id } = req.params;
+    const user = getUser(id);
+    res.status(200).send(user);
+  } catch (e) {
+    res.status(400).send({ error: e.message });
+  }
 });
 
 // create a user
