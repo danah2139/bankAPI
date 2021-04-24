@@ -28,6 +28,7 @@ function App() {
     setId(id);
     console.log("user created");
   };
+  //TODO: refactoring to one func
 
   const handleWithdrawSubmit = async (cash) => {
     try {
