@@ -21,23 +21,19 @@ const Button = styled.a`
   border-radius: 3px;
 `;
 
-const Actions = () => {
-  // Define what main theme will look like
-  const theme = {
-    main: "mediumseagreen",
-  };
+const Actions = ({ id }) => {
   return (
     <Wrapper>
-      <Link to="/accounts/:id/actions/withdraw">
+      <Link to={`/accounts/${id}/actions/withdraw`}>
         <Button theme={{ main: "red" }}>Withdraw</Button>
       </Link>
-      <Link to="/accounts/:id/actions/deposite">
+      <Link to={`/accounts/${id}/actions/deposite`}>
         <Button theme={{ main: "green" }}>Deposite</Button>
       </Link>
-      <Link to="/accounts/:id/actions/transfer">
+      <Link to={`/accounts/${id}/actions/transfer`}>
         <Button theme={{ main: "blue" }}>Transfer</Button>
       </Link>
-      <Link to="/accounts/:id/actions/updateCredit">
+      <Link to={`/accounts/${id}/actions/updateCredit`}>
         <Button theme={{ main: "purple" }}>Update Credit</Button>
       </Link>
     </Wrapper>
