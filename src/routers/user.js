@@ -106,8 +106,8 @@ router.put("/api/users/transfer/:from/:to", (req, res) => {
   try {
     const { from ,to } = req.params;
     const cash = req.body;
-    const fromAccount = await AccountModel.findOne({ _id: from, isActive: true });
-      const toAccount = await AccountModel.findOne({ _id: req.to, isActive: true });
+    const fromAccount = await User.findOne({ _id: from, isActive: true });
+      const toAccount = await User.findOne({ _id: req.to, isActive: true });
       if (!fromAccount) return res.status(404).send(`No active user with passport id ${from} was found`);
       if (!toAccount) return res.status(404).send(`No active user with passport id ${to} was found`);
       fromAccount.cash -= cash;
