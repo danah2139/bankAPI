@@ -3,39 +3,21 @@ const router = new express.Router();
 const User = require("../models/user");
 const Transaction = require("../models/transaction");
 
-const {
-  getAllUsers,
-  createUser,
-  getUser,
-  depositMoney,
-  withdrawMoney,
-  updateUserCredit,
-  transferMoney,
-  filterUsers,
-} = require("./utils");
-
 // get all users
-app.get("/api/users", (req, res) => {
-  let users = getAllUsers();
-  //console.log(users);
-  res.json(users);
-});
-
-// filter with params
-app.get("/api/filter/params", (req, res) => {
+router.get("/api/users", async (req, res) => {
   try {
-    const users = filterUsers(req.query);
-    res.status(200).send(users);
+    const result = await User.find({});
+    res.send(result);
   } catch (e) {
-    console.log(e);
-    res.status(400).send({ message: e.message });
+    res.status(400).send(e.massage);
   }
 });
+
 // get user
-app.get("/api/users/:id/", (req, res) => {
+router.get("/api/users/:id/", async (req, res) => {
   try {
     const { id } = req.params;
-    const user = getUser(id);
+    const user = await User.findById(id);
     res.status(200).send(user);
   } catch (e) {
     res.status(400).send({ error: e.message });
@@ -43,49 +25,110 @@ app.get("/api/users/:id/", (req, res) => {
 });
 
 // create a user
-app.post("/api/users", (req, res) => {
+router.post("/api/users", async (req, res) => {
   try {
-    const user = createUser(req.body);
-    res.status(201).send(user);
+    const user = new User(req.body);
+    const result = await user.save();
+    res.status(201).send(result);
   } catch (e) {
     res.status(400).send({ error: e.message });
   }
 });
 
 //update user cash
-app.put("/api/users/:id/desposit", (req, res) => {
+router.put("/api/users/:id/desposit", (req, res) => {
   try {
     const { id } = req.params;
     const cash = req.body;
-    depositMoney(id, cash);
+    if (typeof cash === "undefined") return res.status(400).send({ error: "You need to pass an amount for the deposit" });
+        const account = await User.findOne({ id, isActive: true });
+        if (!account) return res.status(404).send(`No active user with passport id ${id} was found`);
+        account.cash += cash;
+        const transaction = new Transaction({ actionType: "deposit", fromId: account._id, amount: cash });
+        await account.save();
+        await transaction.save();
+        res.status(200).send(account);
+
   } catch (e) {
-    res.status(400).send({ error: e.message });
+    res.status(500).send({ error: e.message });
   }
 });
 
-app.put("/api/users/:id/withdraw", (req, res) => {
+router.put("/api/users/:id/withdraw", (req, res) => {
   try {
     const { id } = req.params;
     const cash = req.body;
-    withdrawMoney(id, cash);
+    if (typeof cash === "undefined") return res.status(400).send({ error: "You need to pass an amount for the deposit" });
+    const account = await User.findOne({ id, isActive: true });
+    if (!account) return res.status(404).send(`No active user with passport id ${id} was found`);
+    account.cash -= cash;
+    const transaction = new Transaction({ actionType: "withdraw", fromId: account._id, amount: cash });
+    await account.save();
+    await transaction.save();
+    res.status(200).send(account);
   } catch (e) {
-    res.status(400).send({ error: e.message });
+    res.status(500).send({ error: e.message });
   }
 });
 
 // update user credit
-app.put("/api/users/:id/credit", (req, res) => {
+router.put("/api/users/:id/credit", async (req, res) => {
   const { id } = req.params;
   const credit = req.body;
-  updateUserCredit(id, credit);
+  if (typeof credit === "undefined")
+    return res
+      .status(400)
+      .send({ error: "you need to have the new credit in the request body" });
+  try {
+    const account = await User.findOneAndUpdate(
+      { id, isActive: true },
+      { credit },
+      { new: true, runValidators: true }
+    );
+    if (!account)
+      return res
+        .status(404)
+        .send(`No active user with passport id ${id} was found`);
+    const transaction = new Transaction({
+      actionType: "updateCredit",
+      fromId: _id,
+      amount: credit,
+    });
+    await transaction.save();
+    res.status(200).send(account);
+  } catch (error) {
+    res.status(500).send(error);
+  }
 });
 
 //transfer money
-app.put("/api/users/transfer/:from/:to", (req, res) => {
+router.put("/api/users/transfer/:from/:to", (req, res) => {
   try {
-    const users = transferMoney(req.params.to, req.params.from, req.body.cash);
-    res.status(200).send(users);
+    const { from ,to } = req.params;
+    const cash = req.body;
+    const fromAccount = await AccountModel.findOne({ _id: from, isActive: true });
+      const toAccount = await AccountModel.findOne({ _id: req.to, isActive: true });
+      if (!fromAccount) return res.status(404).send(`No active user with passport id ${from} was found`);
+      if (!toAccount) return res.status(404).send(`No active user with passport id ${to} was found`);
+      fromAccount.cash -= cash;
+      toAccount.cash += cash;
+      const transaction = new Transaction({
+        actionType: "transfer",
+        fromId: fromAccount._id,
+        toId: toAccount._id,
+        amount: cash,
+      });
+
+      await fromAccount.save();
+
+      await toAccount.save();
+
+      await transaction.save();
+
+      res.status(200).send({ fromAccount, toAccount });
+
+
   } catch (e) {
-    res.status(400).send({ error: e.message });
+    res.status(500).send({ error: e.message });
   }
 });

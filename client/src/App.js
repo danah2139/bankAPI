@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import API from "./api/API";
 import Form from "./components/Form";
+import List from './components/List'
 import Actions from "./components/Actions";
 import "./App.css";
 import { useState } from "react";
@@ -19,8 +20,13 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
+
         <Switch>
-          <Route path="/">
+          <Route path='/'><List/></Route>   
+          <Route path="/signup">
+            <Form handleSubmit={handlePassportSubmit} title="enter your passport" errrorMessage={errrorMessage} />
+          </Route>
+        <Route path="/login">
             <Form handleSubmit={handleIdSubmit} title="enter your id" errrorMessage={errrorMessage} />
           </Route>
           <Route path="/accounts/:id/actions">
@@ -35,8 +41,6 @@ function App() {
           <Route path="/accounts/:id/actions/updateCredit">
             <Form handleSubmit={handleIdSubmit} title="enter credit to update" errrorMessage={errrorMessage} />
           </Route>
-
-
         </Switch>
       </BrowserRouter>
     </div>
