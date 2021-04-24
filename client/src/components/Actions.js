@@ -6,13 +6,16 @@ const Wrapper = styled.div`
   height: 100vh;
   flex-direction: column;
   width: 40vw;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 `;
 
 const Button = styled.a`
   align-items: center;
+  cursor: pointer;
   padding: 10px 15px;
+  margin-bottom: 20px;
+  display: block;
   color: white;
   background: ${(props) => props.theme.main};
   border-radius: 3px;

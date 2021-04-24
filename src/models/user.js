@@ -13,10 +13,10 @@ const User = mongoose.model("User", {
     },
   },
   name: { type: String },
-  credit: { type: Number, deault: 0, min: 0 },
+  credit: { type: Number, default: 0, min: 0 },
   cash: {
     type: Number,
-    deault: 0,
+    default: 0,
     min: 0,
     validate(value) {
       if (value < -this.credit)

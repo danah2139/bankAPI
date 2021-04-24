@@ -10,7 +10,7 @@ const Wrapper = styled.div`
 `;
 
 const Button = styled.a`
-  curser: pointer;
+  cursor: pointer;
   align-items: center;
   font-size: 1rem;
   text-transform: uppercase;
