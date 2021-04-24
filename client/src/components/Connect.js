@@ -1,22 +1,36 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
-const Button = styled.a`
+
+const Wrapper = styled.div`
+  display: flex;
+  height: 100vh;
+  width: 40vw;
+  justify-content: space-between;
   align-items: center;
-  padding: 10px 15px;
+`;
+
+const Button = styled.a`
+  curser: pointer;
+  align-items: center;
+  font-size: 1rem;
+  text-transform: uppercase;
+  padding: 2rem 1rem;
+  font-weight: bold;
   color: white;
-  background: ${color};
+  background: ${(props) => props.theme.main};
   border-radius: 3px;
 `;
 const Connect = () => {
   return (
-    <div>
+    <Wrapper>
+      <h2>Please choose way to connect: </h2>
       <Link to="/login">
-        <Button color="red">LOGIN</Button>
+        <Button theme={{ main: "blue" }}>LOGIN</Button>
       </Link>
       <Link to="/signUp">
-        <Button color="blue">SIGNUP</Button>
+        <Button theme={{ main: "purple" }}>SIGN UP</Button>
       </Link>
-    </div>
+    </Wrapper>
   );
 };
 export default Connect;

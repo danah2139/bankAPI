@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
-const validator = require("validator");
 const isIsraeliIdValid = require("israeli-id-validator");
 
 const User = mongoose.model("User", {
   _id: {
     type: Number,
     required: true,
+    unique: true,
     trim: true,
     async validate(value) {
       if (!isIsraeliIdValid(value))
@@ -14,10 +14,15 @@ const User = mongoose.model("User", {
   },
   name: { type: String },
   credit: { type: Number, deault: 0, min: 0 },
-  cash: { type: Number, deault: 0, min: 0 ,   
-  validate(value) {
-    if (value < -this.credit) throw "Cash can't be less than the credit allows";
-  }},
+  cash: {
+    type: Number,
+    deault: 0,
+    min: 0,
+    validate(value) {
+      if (value < -this.credit)
+        throw "Cash can't be less than the credit allows";
+    },
+  },
   isActive: { type: Boolean, default: true },
 });
 

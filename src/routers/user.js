@@ -36,33 +36,52 @@ router.post("/api/users", async (req, res) => {
 });
 
 //update user cash
-router.put("/api/users/:id/desposit", (req, res) => {
+router.put("/api/users/:id/desposit", async (req, res) => {
   try {
     const { id } = req.params;
     const cash = req.body;
-    if (typeof cash === "undefined") return res.status(400).send({ error: "You need to pass an amount for the deposit" });
-        const account = await User.findOne({ id, isActive: true });
-        if (!account) return res.status(404).send(`No active user with passport id ${id} was found`);
-        account.cash += cash;
-        const transaction = new Transaction({ actionType: "deposit", fromId: account._id, amount: cash });
-        await account.save();
-        await transaction.save();
-        res.status(200).send(account);
-
+    if (typeof cash === "undefined")
+      return res
+        .status(400)
+        .send({ error: "You need to pass an amount for the deposit" });
+    const account = await User.findOne({ id, isActive: true });
+    if (!account)
+      return res
+        .status(404)
+        .send(`No active user with passport id ${id} was found`);
+    account.cash += cash;
+    const transaction = new Transaction({
+      actionType: "deposit",
+      fromId: account._id,
+      amount: cash,
+    });
+    await account.save();
+    await transaction.save();
+    res.status(200).send(account);
   } catch (e) {
     res.status(500).send({ error: e.message });
   }
 });
 
-router.put("/api/users/:id/withdraw", (req, res) => {
+router.put("/api/users/:id/withdraw", async (req, res) => {
   try {
     const { id } = req.params;
     const cash = req.body;
-    if (typeof cash === "undefined") return res.status(400).send({ error: "You need to pass an amount for the deposit" });
+    if (typeof cash === "undefined")
+      return res
+        .status(400)
+        .send({ error: "You need to pass an amount for the deposit" });
     const account = await User.findOne({ id, isActive: true });
-    if (!account) return res.status(404).send(`No active user with passport id ${id} was found`);
+    if (!account)
+      return res
+        .status(404)
+        .send(`No active user with passport id ${id} was found`);
     account.cash -= cash;
-    const transaction = new Transaction({ actionType: "withdraw", fromId: account._id, amount: cash });
+    const transaction = new Transaction({
+      actionType: "withdraw",
+      fromId: account._id,
+      amount: cash,
+    });
     await account.save();
     await transaction.save();
     res.status(200).send(account);
@@ -102,33 +121,39 @@ router.put("/api/users/:id/credit", async (req, res) => {
 });
 
 //transfer money
-router.put("/api/users/transfer/:from/:to", (req, res) => {
+router.put("/api/users/transfer/:from/:to", async (req, res) => {
   try {
-    const { from ,to } = req.params;
+    const { from, to } = req.params;
     const cash = req.body;
     const fromAccount = await User.findOne({ _id: from, isActive: true });
-      const toAccount = await User.findOne({ _id: req.to, isActive: true });
-      if (!fromAccount) return res.status(404).send(`No active user with passport id ${from} was found`);
-      if (!toAccount) return res.status(404).send(`No active user with passport id ${to} was found`);
-      fromAccount.cash -= cash;
-      toAccount.cash += cash;
-      const transaction = new Transaction({
-        actionType: "transfer",
-        fromId: fromAccount._id,
-        toId: toAccount._id,
-        amount: cash,
-      });
+    const toAccount = await User.findOne({ _id: req.to, isActive: true });
+    if (!fromAccount)
+      return res
+        .status(404)
+        .send(`No active user with passport id ${from} was found`);
+    if (!toAccount)
+      return res
+        .status(404)
+        .send(`No active user with passport id ${to} was found`);
+    fromAccount.cash -= cash;
+    toAccount.cash += cash;
+    const transaction = new Transaction({
+      actionType: "transfer",
+      fromId: fromAccount._id,
+      toId: toAccount._id,
+      amount: cash,
+    });
 
-      await fromAccount.save();
+    await fromAccount.save();
 
-      await toAccount.save();
+    await toAccount.save();
 
-      await transaction.save();
+    await transaction.save();
 
-      res.status(200).send({ fromAccount, toAccount });
-
-
+    res.status(200).send({ fromAccount, toAccount });
   } catch (e) {
     res.status(500).send({ error: e.message });
   }
 });
+
+module.exports = router;
