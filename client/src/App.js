@@ -57,10 +57,10 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
+        <List />
         <Switch>
           <Route path="/" exact>
             <Connect />
-            <List />
           </Route>
           <Route path="/signup" exact>
             <CreateUser
