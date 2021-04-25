@@ -14,11 +14,14 @@ function App() {
   const history = useHistory();
   const [errrorMessage, setErrorMessage] = useState("");
   const [id, setId] = useState("");
-  const handleIdSubmit = async (id) => {
+  const handleIdSubmit = async (newId) => {
     try {
-      let user = await API.get({ id });
+      console.log(newId);
+      let user = await API.get(newId);
       setId(user._id);
-      history.push(`/accounts/${id}/actions`);
+      if (id) {
+        history.push(`/accounts/${id}/actions`);
+      }
     } catch (e) {
       setErrorMessage(e.message);
       console.log(e);

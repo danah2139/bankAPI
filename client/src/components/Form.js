@@ -19,11 +19,14 @@ const Wrapper = styled.div`
 
 const Form = ({ title, handleSubmit }) => {
   const [term, setTerm] = useState("");
+  const handleClick = () => {
+    handleSubmit(term);
+  };
   return (
     <Wrapper>
       <h2>{title}</h2>
-      <input type="number" onChange={() => setTerm(term)} value={term} />
-      <input type="submit" onSubmit={() => handleSubmit(term)} />
+      <input type="number" value={term} onChange={() => setTerm(term)} />
+      <button onClick={handleClick}>Submit</button>
     </Wrapper>
   );
 };
